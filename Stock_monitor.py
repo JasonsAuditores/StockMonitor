@@ -1,5 +1,5 @@
-#1st version Oct 29th
-#Github version
+#Github_flaskversion
+from flask import Flask, request
 import time
 import telebot
 import finnhub
@@ -256,5 +256,19 @@ def handle_removeprice(message):
         # Send an error message to the user
         bot.reply_to(message, "An error occurred while processing your request. Please try again later.")        
 
-# 开始监听
-bot.polling()
+app = Flask(__name__)
+
+# 设置webhook路由
+@app.route('/bot_webhook/', methods=['POST'])
+def get_message():
+    json_str = request.stream.read().decode('utf-8')
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '', 200
+
+if __name__ == '__main__':
+    # 设置Webhook，以便在你的Flask应用中接收消息
+    bot.remove_webhook()
+    bot.set_webhook(url="https://milesyop.azurewebsites.net/bot_webhook/")  # 设置你的外部URL
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host="0.0.0.0", port=port)
