@@ -270,5 +270,5 @@ if __name__ == '__main__':
     # 设置Webhook，以便在你的Flask应用中接收消息
     bot.remove_webhook()
     bot.set_webhook(url="https://milesyop.azurewebsites.net/bot_webhook/")  # 设置你的外部URL
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 80))
     app.run(host="0.0.0.0", port=port)
