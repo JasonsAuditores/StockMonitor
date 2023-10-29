@@ -113,6 +113,7 @@ def monitor_stock(stock):
                 send_telegram_message(chat_id, notification, expect_reply=True)
                 stock.monitoring = False  # 停止监控
                 pending_adjustment[chat_id] = {'symbol': stock.symbol, 'target_type': 'rise'}  # 存储待处理信息
+                logger.info(f"Stored pending adjustment for chat_id {chat_id}: {pending_adjustment[chat_id]}")
 
             elif status == 'fall':
                 notification = f"{stock.symbol} has reached or fallen below the target fall price: ${stock.target_fall} (Current time: {current_time}). Would you like to adjust the target fall price? Please reply with the new price."
@@ -120,7 +121,7 @@ def monitor_stock(stock):
                 send_telegram_message(chat_id, notification, expect_reply=True)
                 stock.monitoring = False  # 停止监控
                 pending_adjustment[chat_id] = {'symbol': stock.symbol, 'target_type': 'fall'}  # 存储待处理信息
-
+                logger.info(f"Stored pending adjustment for chat_id {chat_id}: {pending_adjustment[chat_id]}")
             # 如果操作成功，重置重试计数器
             retries = 0
 
@@ -224,6 +225,7 @@ def handle_removeprice(message):
 
 def receive_user_reply(message):
     chat_id = message.chat.id  # The chat from which the reply was received
+    logger.info(pending_adjustment)
     try:
         new_price = float(message.text)  # Try to convert the reply to a float
         
