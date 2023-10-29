@@ -1,3 +1,5 @@
+#1st version Oct 29th
+#Github version
 import time
 import telebot
 import finnhub
@@ -5,11 +7,16 @@ from datetime import datetime
 import pytz
 from concurrent.futures import ThreadPoolExecutor
 import logging
+import os
 
-# 配置你的 FinnHub 和 Telegram API
-FINNHUB_API_KEY = 'ckugmi1r01qmtr8l6fegckugmi1r01qmtr8l6ff0'
-TG_API_KEY = "6547574375:AAH3vWtRh4inIrXaJDmwrEZ5DMfXIUP3y4A"
+# 从环境变量获取API密钥
+FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+TG_API_KEY = os.getenv('TG_API_KEY')
 chat_id = "5157836313"
+
+# 检查密钥是否存在
+if FINNHUB_API_KEY is None or TG_API_KEY is None:
+    raise ValueError("Please ensure that FINNHUB_API_KEY&TG_API_KEY have been set")
 
 finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
 bot = telebot.TeleBot(TG_API_KEY)
