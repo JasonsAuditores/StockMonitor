@@ -12,7 +12,7 @@ import os
 # 从环境变量获取API密钥
 FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
 TG_API_KEY = os.getenv('TG_API_KEY')
-chat_id = "5157836313"
+chat_id = os.getenv('Chat_ID')
 
 # 检查密钥是否存在
 if FINNHUB_API_KEY is None or TG_API_KEY is None:
