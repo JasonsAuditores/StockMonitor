@@ -140,6 +140,7 @@ def monitor_stock(stock):
             status = stock.check_price()
             tz = pytz.timezone('Asia/Shanghai')  # 指定时区
             current_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
+            chat_id = "5157836313"
 
             if status == 'rise':
                 notification = f"{stock.symbol} has reached or exceeded the target rise price: ${stock.target_rise} (Current time: {current_time}). Would you like to adjust the target rise price? Please reply with the new price."
