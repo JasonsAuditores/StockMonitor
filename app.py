@@ -31,6 +31,8 @@ MAX_RETRIES = 5 #max try times: 5
 
 # 存储股票目标价格和监控状态
 stocks = {}
+# 可能需要一个变量来存储哪只股票需要价格调整，以及是上涨还是下跌
+pending_adjustment = {}
 
 class Stock:
     def __init__(self, symbol, target_rise, target_fall):
@@ -139,9 +141,6 @@ def monitor_stock(stock):
                 # 这里，你还可以选择记录此错误，或采取其他错误处理措施。
                 
         time.sleep(30)  # 正常的睡眠时间用于下一次检查
-        
-# 可能需要一个变量来存储哪只股票需要价格调整，以及是上涨还是下跌
-pending_adjustment = {}
 
 def receive_user_reply(message):
     chat_id = message.chat.id  # The chat from which the reply was received
