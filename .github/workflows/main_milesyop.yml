@@ -64,4 +64,4 @@ jobs:
         with:
           app-name: 'Milesyop'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_10E85F8F628B426481313B5E7D869711 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9A5268B4D8B94CD1AC148B4057F2E4DC }}
