@@ -94,44 +94,7 @@ def send_telegram_message(chat_id, msg, expect_reply=False):
                 time.sleep(2)  # 在重试之前等待2秒可能会防止过多的请求
     else:
         logging.error("All attempts failed to send telegram message.")
-        
-# 可能需要一个变量来存储哪只股票需要价格调整，以及是上涨还是下跌
-pending_adjustment = {}
-
-def receive_user_reply(message):
-    chat_id = message.chat.id  # The chat from which the reply was received
-    try:
-        new_price = float(message.text)  # Try to convert the reply to a float
-        
-        if chat_id in pending_adjustment:
-            symbol = pending_adjustment[chat_id]['symbol']
-            target_type = pending_adjustment[chat_id]['target_type']  # 'rise' or 'fall'
-            
-            # Retrieve the Stock instance and update the price
-            stock = stocks[symbol]  # Retrieve the Stock object from the dictionary
-            if target_type == 'rise':
-                stock.target_rise = new_price  # Update the attribute of the Stock instance directly
-            else:
-                stock.target_fall = new_price
-
-            # Important: Reactivate monitoring
-            if not stock.monitoring:  # If it's currently not monitoring
-                stock.monitoring = True  # Set the monitoring flag to True
-                # Restart the monitoring thread
-                monitor_thread = threading.Thread(target=monitor_stock, args=(stock,))
-                monitor_thread.start()
-
-            bot.send_message(chat_id, f"The {('rise' if target_type == 'rise' else 'fall')} target price for {symbol} has been updated to: ${new_price}")
-            del pending_adjustment[chat_id]  # Clear the pending item
-        else:
-            bot.send_message(chat_id, "No stock found that requires a price adjustment.")
-
-    except ValueError:
-        # If the conversion fails, send an error message
-        bot.send_message(chat_id, "Please enter a valid price.")
-    except Exception as e:
-        bot.send_message(chat_id, str(e))
-        
+           
 def monitor_stock(stock):
     logger.info(f"Monitoring {stock.symbol}...")  # 记录信息级别的日志
     retries = 0
@@ -177,6 +140,42 @@ def monitor_stock(stock):
                 
         time.sleep(30)  # 正常的睡眠时间用于下一次检查
         
+# 可能需要一个变量来存储哪只股票需要价格调整，以及是上涨还是下跌
+pending_adjustment = {}
+
+def receive_user_reply(message):
+    chat_id = message.chat.id  # The chat from which the reply was received
+    try:
+        new_price = float(message.text)  # Try to convert the reply to a float
+        
+        if chat_id in pending_adjustment:
+            symbol = pending_adjustment[chat_id]['symbol']
+            target_type = pending_adjustment[chat_id]['target_type']  # 'rise' or 'fall'
+            
+            # Retrieve the Stock instance and update the price
+            stock = stocks[symbol]  # Retrieve the Stock object from the dictionary
+            if target_type == 'rise':
+                stock.target_rise = new_price  # Update the attribute of the Stock instance directly
+            else:
+                stock.target_fall = new_price
+
+            # Important: Reactivate monitoring
+            if not stock.monitoring:  # If it's currently not monitoring
+                stock.monitoring = True  # Set the monitoring flag to True
+                # Restart the monitoring thread
+                monitor_thread = threading.Thread(target=monitor_stock, args=(stock,))
+                monitor_thread.start()
+
+            bot.send_message(chat_id, f"The {('rise' if target_type == 'rise' else 'fall')} target price for {symbol} has been updated to: ${new_price}")
+            del pending_adjustment[chat_id]  # Clear the pending item
+        else:
+            bot.send_message(chat_id, "No stock found that requires a price adjustment.")
+
+    except ValueError:
+        # If the conversion fails, send an error message
+        bot.send_message(chat_id, "Please enter a valid price.")
+    except Exception as e:
+        bot.send_message(chat_id, str(e))        
 @bot.message_handler(commands=['setprice'])
 def handle_setprice(message):
     try:
