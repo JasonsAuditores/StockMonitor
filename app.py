@@ -255,9 +255,10 @@ def receive_user_reply(message):
         bot.send_message(chat_id, "Please enter a valid price.")
     except Exception as e:
         bot.send_message(chat_id, str(e))
-# 放在上述命令处理器之后
-@bot.message_handler(func=lambda message: True)  # 捕获所有消息
-def handle_all_messages(message):
+        
+# 最后，捕获所有其他的文本消息
+@bot.message_handler(content_types=['text'])
+def handle_text_messages(message):
     receive_user_reply(message)
     
 app = Flask(__name__)
